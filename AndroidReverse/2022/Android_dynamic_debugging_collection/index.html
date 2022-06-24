@@ -1,0 +1,509 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Android APK无源码动态调试合集 | Forgo7ten'blog</title><meta name="keywords" content="Android逆向"><meta name="author" content="Forgo7ten"><meta name="copyright" content="Forgo7ten"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Android动态调试合集 ¶  [TOC] JEB动态调试smali ¶    选中smali代码后，Ctrl B下断点   启动app   以debug模式启动Activity（调试一启动就执行的方法） 1adb shell am start -D -n [package_name]&#x2F;[activity_name]   调试可以手动触发(不着急)的方法，手动打开app或者去掉上述命令的-D参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android APK无源码动态调试合集">
+<meta property="og:url" content="https://forgo7ten.github.io/AndroidReverse/2022/Android_dynamic_debugging_collection/index.html">
+<meta property="og:site_name" content="Forgo7ten&#39;blog">
+<meta property="og:description" content="Android动态调试合集 ¶  [TOC] JEB动态调试smali ¶    选中smali代码后，Ctrl B下断点   启动app   以debug模式启动Activity（调试一启动就执行的方法） 1adb shell am start -D -n [package_name]&#x2F;[activity_name]   调试可以手动触发(不着急)的方法，手动打开app或者去掉上述命令的-D参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://forgo7ten.gitee.io/store/imgs/16.jpg">
+<meta property="article:published_time" content="2022-01-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-01-20T16:00:00.000Z">
+<meta property="article:author" content="Forgo7ten">
+<meta property="article:tag" content="Android逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://forgo7ten.gitee.io/store/imgs/16.jpg"><link rel="shortcut icon" href="/images/favicon.jpg"><link rel="canonical" href="https://forgo7ten.github.io/AndroidReverse/2022/Android_dynamic_debugging_collection/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//www.clarity.ms"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="8L0ZjthONyq6-m7FniRTH8A7Bh0x-KOPZbKOcNimnYA"/><meta name="baidu-site-verification" content="code-gjVsyPt7yr"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b076845d73a4f28b3c7401b2a0a8a9db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>(function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "9zbibmmffi");</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Android APK无源码动态调试合集',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-21 00:00:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Forgo7ten'blog" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-compass"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/atom.xml"><i class="fa-fw fa fa-rss"></i><span> RSS订阅</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('http://forgo7ten.gitee.io/store/imgs/16.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Forgo7ten'blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-compass"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/atom.xml"><i class="fa-fw fa fa-rss"></i><span> RSS订阅</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Android APK无源码动态调试合集</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-20T16:00:00.000Z" title="发表于 2022-01-21 00:00:00">2022-01-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-01-20T16:00:00.000Z" title="更新于 2022-01-21 00:00:00">2022-01-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Android%E9%80%86%E5%90%91/">Android逆向</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Android%E9%80%86%E5%90%91/%E8%BF%87%E7%A8%8B%E8%AE%B0%E5%BD%95%E5%A4%87%E6%9F%A5/">过程记录备查</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Android APK无源码动态调试合集"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Android动态调试合集">Android动态调试合集<a class="header-anchor" href="#Android动态调试合集"> ¶ </a></h1>
+<p>[TOC]</p>
+<h2 id="JEB动态调试smali">JEB动态调试smali<a class="header-anchor" href="#JEB动态调试smali"> ¶ </a></h2>
+<ol>
+<li>
+<p>选中smali代码后，<code>Ctrl B</code>下断点</p>
+</li>
+<li>
+<p>启动app</p>
+<ol>
+<li>
+<p>以debug模式启动Activity（调试一启动就执行的方法）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -D -n [package_name]/[activity_name]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>调试可以手动触发(不着急)的方法，手动打开app或者去掉上述命令的<code>-D</code>参数</p>
+</li>
+</ol>
+</li>
+<li>
+<p>JEB附加进程</p>
+<ol>
+<li>菜单栏【调试器】下选择【开始】（<strong>不能开启ddms或AndroidStudio</strong>）</li>
+<li>弹出对话框，选择设备、进程后，点击【附上】。app会被附加，运行到断点断下。</li>
+</ol>
+</li>
+</ol>
+<h2 id="使用AndroidStudio配合Smalidea插件来动态调试smali">使用AndroidStudio配合Smalidea插件来动态调试smali<a class="header-anchor" href="#使用AndroidStudio配合Smalidea插件来动态调试smali"> ¶ </a></h2>
+<ol>
+<li>Smalidea安装
+<ol>
+<li>github地址：<a target="_blank" rel="noopener" href="https://github.com/JesusFreke/smalidea">JesusFreke/smalidea: smalidea is a smali language plugin for IntelliJ IDEA (github.com)</a></li>
+<li>下载后在插件页导入安装即可</li>
+<li>配置及使用：
+<ol>
+<li>(0.6版本已可以自动配置)检查<code>Settings</code>-&gt;<code>Editor</code>-&gt;<code>File Types</code>中，除了<code>Smali</code>外多了一个<code>smali Files</code>，内有内容<code>*.smali</code></li>
+<li>菜单栏<code>File</code>下多了<code>【Profile or Debug Apk】</code>；可以方便的选择一个apk来反编译成项目、或使用<code>apktool d</code>反编译然后导入也可以</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>获得反编译apk后的smali文件夹
+<ol>
+<li>方法一：<code>apktool d</code>反编译apk得到文件夹</li>
+<li>方法二：使用菜单栏<code>File</code>下的<code>【Profile or Debug Apk】</code></li>
+</ol>
+</li>
+</ol>
+<p>方法一：</p>
+<ol>
+<li>
+<p>AS准备调试</p>
+<ol>
+<li>使用AndroidStudio选择**【Import Project(导入项目)】**，并选择该文件夹；会提示不是项目，然后选择创建新项目</li>
+<li>添加运行配置<code>【Add Configuration...】</code>
+<ol>
+<li>选择模板<code>【Remote JVM Debug】</code>，端口设置为8700</li>
+</ol>
+</li>
+<li>设置反编译后文件夹的<strong>根目录</strong>，右键，<code>【Mark Directory as】</code>选择<code>【Sources Root】</code> （貌似可选）</li>
+<li>在smali相应处下断点</li>
+</ol>
+</li>
+<li>
+<p>开始调试</p>
+<ol>
+<li>
+<p>点击【运行】右侧的【调试】按钮，程序开始运行，运行到断点断下</p>
+</li>
+<li>
+<p>左上角选择【停止】按钮左侧的【Attach Debugger to Android Process】附加按钮</p>
+<ol>
+<li>
+<p>以debug模式启动Activity（调试一启动就执行的方法）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -D -n [package_name]/[activity_name]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>转发app运行端口到<code>8700</code>（可选）</p>
+<ol>
+<li>
+<p>命令方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb forward tcp:8700 jdwp:[app_port]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>使用ddms(monitor)；位于<code>Sdk\tools\monitor.bat</code>(需下载)</p>
+<ol>
+<li>打开monitor，选中app包名所在进程，该进程的port后会出现<code>/8700</code></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>点击【附加】按钮选择设备下的进程，点击OK，即可开始调试</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>方法二：</p>
+<p>可直接【运行】、【调试】、【附加】</p>
+<h2 id="IDA动态调试so">IDA动态调试so<a class="header-anchor" href="#IDA动态调试so"> ¶ </a></h2>
+<ul>
+<li>
+<p>IDA修改默认监听端口号（<code>-p</code>参数）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./server -p 12345</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="调试app一启动就执行的native函数">调试app一启动就执行的native函数<a class="header-anchor" href="#调试app一启动就执行的native函数"> ¶ </a></h3>
+<p>如<code>JNI_OnLoad</code>、<code>.init_proc</code>或<code>.init_array</code>等</p>
+<p>调试此类函数需要以debug模式启动app</p>
+<ol>
+<li>
+<p>启动<code>android_server</code></p>
+<ol>
+<li>复制<code>IDA\dbgsrv\</code>下的对应的<code>android_server</code>到手机的如<code>/data/local/tmp/</code>目录下，并给予执行权限</li>
+<li>在<code>su</code>下运行server启动监听</li>
+</ol>
+</li>
+<li>
+<p>开启端口转发（将设备与客户机间的23946端口连通</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb forward tcp:23946 tcp:23946</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>以debug模式启动Activity</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -D -n [package_name]/[activity_name]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>转发app运行端口到<code>8700</code>（可选，详见【步骤6】）</p>
+<ol>
+<li>
+<p>命令方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb forward tcp:8700 jdwp:[app_port]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>使用ddms(monitor)；位于<code>Sdk\tools\monitor.bat</code>(需下载)</p>
+<ol>
+<li>打开monitor，选中app包名所在进程，该进程的port后会出现<code>/8700</code></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>IDA准备、附加进程</p>
+<ol>
+<li>IDA载入so，在native方法所需处下断点（可选）</li>
+<li>配置调试器选项
+<ol>
+<li>选择调试器<code>[Remote ARM Linux/ Android debugger]</code></li>
+<li>菜单栏<code>[Debugger]</code>下<code>[Process options]</code>中，配置主机为<code>localhost</code>或<code>127.0.0.1</code>(即本机)，端口为默认<code>23946</code>(同server监听端口)</li>
+<li>菜单栏<code>[Debugger]</code>下<code>[Debugger options]</code>中，可根据需要勾选<code>Suspend on process entry point</code>,<code>Suspend on thread start/exit</code>,<code>Suspend on library load/unload</code></li>
+</ol>
+</li>
+<li>附加进程
+<ol>
+<li>选择菜单栏<code>[Debugger]</code>下<code>[Attach to process]</code>，之后弹出一个可调试应用包名的窗口，<code>ctrl F</code>可以搜索，选择调试的应用包名，点击<code>OK</code>进行附加</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p><code>jdwp</code>使app开始运行，此处的<code>8700</code>为【步骤4】中转发端口（若未执行步骤4，可使用ddms的最后一列数字）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8700</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>返回IDA，</p>
+<ol>
+<li>
+<p>寻找加载的so</p>
+<ol>
+<li>
+<p><strong>如果在【步骤5.2.3】中勾选了中断设置</strong>，先查看<code>module</code>窗口(ctrl+s)是否加载了所需的so，如果没有、需要F9运行程序再次查看，如此反复（或者查看IDA是否弹出【same】对话框？）</p>
+<p>如果没有勾选，F9运行则会直接弹出same对话框（记得在【步骤5.1】下断点）；确定后<strong>会卡住一段时间</strong></p>
+</li>
+<li>
+<p>加载时，IDA会询问远程的so文件与本地的是否相同，选择【same】（选择后，so文件就被加载进来了）</p>
+</li>
+<li>
+<p>加载后，双击so的module，会弹出module方法窗口，选择相应的方法如<code>JNI_onLoad</code>，并在相应地址如函数开头下断点</p>
+</li>
+</ol>
+</li>
+<li>
+<p>当被调试so加载进来并且下好断点后，F9运行，即可断在<code>JNI_onLoad</code>开头处</p>
+</li>
+</ol>
+</li>
+<li>
+<p>完成，可以愉快的调试啦。记得<em>根据需要</em>取消【步骤5.2.3】，不然会一直断下</p>
+</li>
+</ol>
+<h3 id="调试可以手动触发的函数">调试可以手动触发的函数<a class="header-anchor" href="#调试可以手动触发的函数"> ¶ </a></h3>
+<p>自然也可以按照上面那种方式，但是比较慢，因为app要加载</p>
+<p>或者</p>
+<ol>
+<li>【如上步骤1】</li>
+<li>【如上步骤2】</li>
+<li>手动启动app，<strong>或</strong>命令<code>adb shell am start -n [package_name]/[activity_name]</code>(即去掉<code>-D</code>参数)</li>
+<li>【如上步骤5】，一般不需要【步骤5.2.3】（根据自己情况）</li>
+<li>【步骤4】附加完成后，会弹出【same】窗口，之后点击运行、触发断点，即可开始调试</li>
+</ol>
+<h2 id="错误踩坑解决">错误踩坑解决<a class="header-anchor" href="#错误踩坑解决"> ¶ </a></h2>
+<h3 id="Smalidea调试">Smalidea调试<a class="header-anchor" href="#Smalidea调试"> ¶ </a></h3>
+<h4 id="【附加】时无设备或进程">【附加】时无设备或进程<a class="header-anchor" href="#【附加】时无设备或进程"> ¶ </a></h4>
+<p>没有设备进程供选择，点击菜单栏【File】的【Invalidate Caches / Restart…】来清理缓存并重新启动AS</p>
+<h3 id="DDMS">DDMS<a class="header-anchor" href="#DDMS"> ¶ </a></h3>
+<h4 id="DDMS总是启动失败">DDMS总是启动失败<a class="header-anchor" href="#DDMS总是启动失败"> ¶ </a></h4>
+<ul>
+<li>切换java版本为<code>1.8</code></li>
+<li><strong>或者</strong>，拷贝java1.8的<code>jre</code>一份，放到<code>Sdk\tools\lib\monitor-x86_64\jre</code></li>
+</ul>
+<h2 id="此外-2">此外<a class="header-anchor" href="#此外-2"> ¶ </a></h2>
+<h3 id="debuggable属性">debuggable属性<a class="header-anchor" href="#debuggable属性"> ¶ </a></h3>
+<h4 id="app在清单中添加debuggable属性">app在清单中添加debuggable属性<a class="header-anchor" href="#app在清单中添加debuggable属性"> ¶ </a></h4>
+<p>在<code>AndroidManifest.xml</code>的<code>application</code>标签中添加<code>android:debuggable=&quot;true&quot;</code></p>
+<h3 id="修改设备的ro-debuggable-1">修改设备的<code>ro.debuggable=1</code><a class="header-anchor" href="#修改设备的ro-debuggable-1"> ¶ </a></h3>
+<h4 id="安装magisk后">安装magisk后<a class="header-anchor" href="#安装magisk后"> ¶ </a></h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">magisk resetprop ro.debuggable 1</span><br><span class="line">magisk resetprop ro.secure 0</span><br><span class="line">magisk resetprop ro.adb.secure 0</span><br></pre></td></tr></table></figure>
+<p>重启设备后失效</p>
+<h4 id="magisk安装MagiskHide-Props-Config模块">magisk安装<code>MagiskHide Props Config</code>模块<a class="header-anchor" href="#magisk安装MagiskHide-Props-Config模块"> ¶ </a></h4>
+<p>主页：<a target="_blank" rel="noopener" href="https://github.com/Magisk-Modules-Repo/MagiskHidePropsConf/">Magisk-Modules-Repo/MagiskHidePropsConf: MagiskHidePropsConf (github.com)</a></p>
+<p>使用命令<code>props</code>来修改</p>
+<p>选择<code>3 - Edit MagiskHide props</code></p>
+<p>根据需要修改相应ro标志位</p>
+<p>之后需要重启手机</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Forgo7ten</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://forgo7ten.github.io/AndroidReverse/2022/Android_dynamic_debugging_collection/">https://forgo7ten.github.io/AndroidReverse/2022/Android_dynamic_debugging_collection/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Forgo7ten.github.io" target="_blank">Forgo7ten'blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Android%E9%80%86%E5%90%91/">Android逆向</a></div><div class="post_share"><div class="social-share" data-image="http://forgo7ten.gitee.io/store/imgs/16.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.png" target="_blank"><img class="post-qr-code-img" src="/images/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/Crack/Some_crack_apps/"><img class="prev-cover" src="http://forgo7ten.gitee.io/store/imgs/11.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">对一些app的Crack分析</div></div></a></div><div class="next-post pull-right"><a href="/AndroidReverse/2022/Learning_about_cryptographic_algorithms/"><img class="next-cover" src="http://forgo7ten.gitee.io/store/imgs/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">对加密算法的学习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/AndroidReverse/2021/Analysis_of_WeChat/" title="vx逆向分析随笔"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-14</div><div class="title">vx逆向分析随笔</div></div></a></div><div><a href="/AndroidReverse/2021/Android_traffic_capture_configuration_collection/" title="Android抓包配置合集"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-24</div><div class="title">Android抓包配置合集</div></div></a></div><div><a href="/AndroidReverse/2021/Edit_the_Android_image_boot.img/" title="编辑Android镜像boot.img修改全局可调试"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/10.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-08</div><div class="title">编辑Android镜像boot.img修改全局可调试</div></div></a></div><div><a href="/AndroidReverse/2021/Crack_com.xhey.xcamera/" title="今日水印相机自定义水印"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/10.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-10</div><div class="title">今日水印相机自定义水印</div></div></a></div><div><a href="/AndroidReverse/2021/Initial_xposed_module_development/" title="Xposed 模块开发一 环境搭建"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/13.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-12</div><div class="title">Xposed 模块开发一 环境搭建</div></div></a></div><div><a href="/AndroidReverse/2022/Android_devices_init/" title="Android刷机记录"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/17.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-03</div><div class="title">Android刷机记录</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Android%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E5%90%88%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Android动态调试合集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JEB%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95smali"><span class="toc-number">1.1.</span> <span class="toc-text">JEB动态调试smali</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8AndroidStudio%E9%85%8D%E5%90%88Smalidea%E6%8F%92%E4%BB%B6%E6%9D%A5%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95smali"><span class="toc-number">1.2.</span> <span class="toc-text">使用AndroidStudio配合Smalidea插件来动态调试smali</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDA%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95so"><span class="toc-number">1.3.</span> <span class="toc-text">IDA动态调试so</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95app%E4%B8%80%E5%90%AF%E5%8A%A8%E5%B0%B1%E6%89%A7%E8%A1%8C%E7%9A%84native%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">调试app一启动就执行的native函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E5%8F%AF%E4%BB%A5%E6%89%8B%E5%8A%A8%E8%A7%A6%E5%8F%91%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.2.</span> <span class="toc-text">调试可以手动触发的函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E8%B8%A9%E5%9D%91%E8%A7%A3%E5%86%B3"><span class="toc-number">1.4.</span> <span class="toc-text">错误踩坑解决</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Smalidea%E8%B0%83%E8%AF%95"><span class="toc-number">1.4.1.</span> <span class="toc-text">Smalidea调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E3%80%90%E9%99%84%E5%8A%A0%E3%80%91%E6%97%B6%E6%97%A0%E8%AE%BE%E5%A4%87%E6%88%96%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">【附加】时无设备或进程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DDMS"><span class="toc-number">1.4.2.</span> <span class="toc-text">DDMS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DDMS%E6%80%BB%E6%98%AF%E5%90%AF%E5%8A%A8%E5%A4%B1%E8%B4%A5"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">DDMS总是启动失败</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A4%E5%A4%96-2"><span class="toc-number">1.5.</span> <span class="toc-text">此外</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#debuggable%E5%B1%9E%E6%80%A7"><span class="toc-number">1.5.1.</span> <span class="toc-text">debuggable属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#app%E5%9C%A8%E6%B8%85%E5%8D%95%E4%B8%AD%E6%B7%BB%E5%8A%A0debuggable%E5%B1%9E%E6%80%A7"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">app在清单中添加debuggable属性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E8%AE%BE%E5%A4%87%E7%9A%84ro-debuggable-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">修改设备的ro.debuggable&#x3D;1</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85magisk%E5%90%8E"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">安装magisk后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#magisk%E5%AE%89%E8%A3%85MagiskHide-Props-Config%E6%A8%A1%E5%9D%97"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">magisk安装MagiskHide Props Config模块</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('http://forgo7ten.gitee.io/store/imgs/16.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Forgo7ten</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://Forgo7ten.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '9e01c692fcf5a9e47867',
+      clientSecret: '6d5297eda0643a171a9e5510f5ea1c29ad851389',
+      repo: 'Forgo7ten.github.io',
+      owner: 'Forgo7ten',
+      admin: ['Forgo7ten'],
+      id: 'cdea19f37e295c784ff9b18336fd73d8',
+      updateCountCallback: commentCount
+    },{"language":"en","perPage":20,"distractionFreeMode":true,"pagerDirection":"last","createIssueManually":true}))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="ヾ(≧▽≦*)o 点个收藏叭,(*^▽^*),w(ﾟДﾟ)w,ㄟ(≧◇≦)ㄏ,(/≧▽≦)/点个关注叭,Σ(っ °Д °;)っ,(●ˇ∀ˇ●),( •̀ ω •́ )✧,(*/ω＼*),ヽ(*。&gt;Д&lt;)o゜真的不收藏一下嘛,(～o￣3￣)～,ヽ（≧□≦）ノ" data-fontsize="15px" data-random="false" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":0,"vOffset":-20},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script></body></html>

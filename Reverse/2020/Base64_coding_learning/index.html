@@ -1,0 +1,477 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Base16,Base32,Base64编码详细学习 | Forgo7ten'blog</title><meta name="keywords" content="Reverse"><meta name="author" content="Forgo7ten"><meta name="copyright" content="Forgo7ten"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Base编码 ¶  Base16编码 ¶  Base16编码表格 ¶  Base16字符表：0123456789ABCDEF    下标 编码值 下标 编码值     0 0 8 8   1 1 9 9   2 2 10 A   3 3 11 B   4 4 12 C   5 5 13 D   6 6 14 E   7 7 15 F    Base16编码方式 ¶   将数据(根据ASCII编码,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Base16,Base32,Base64编码详细学习">
+<meta property="og:url" content="https://forgo7ten.github.io/Reverse/2020/Base64_coding_learning/index.html">
+<meta property="og:site_name" content="Forgo7ten&#39;blog">
+<meta property="og:description" content="Base编码 ¶  Base16编码 ¶  Base16编码表格 ¶  Base16字符表：0123456789ABCDEF    下标 编码值 下标 编码值     0 0 8 8   1 1 9 9   2 2 10 A   3 3 11 B   4 4 12 C   5 5 13 D   6 6 14 E   7 7 15 F    Base16编码方式 ¶   将数据(根据ASCII编码,">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://forgo7ten.gitee.io/store/imgs/12.jpg">
+<meta property="article:published_time" content="2020-01-15T11:13:05.000Z">
+<meta property="article:modified_time" content="2020-01-15T11:15:00.000Z">
+<meta property="article:author" content="Forgo7ten">
+<meta property="article:tag" content="Reverse">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://forgo7ten.gitee.io/store/imgs/12.jpg"><link rel="shortcut icon" href="/images/favicon.jpg"><link rel="canonical" href="https://forgo7ten.github.io/Reverse/2020/Base64_coding_learning/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//www.clarity.ms"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="8L0ZjthONyq6-m7FniRTH8A7Bh0x-KOPZbKOcNimnYA"/><meta name="baidu-site-verification" content="code-gjVsyPt7yr"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b076845d73a4f28b3c7401b2a0a8a9db";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>(function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "9zbibmmffi");</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Base16,Base32,Base64编码详细学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-01-15 19:15:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Forgo7ten'blog" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-compass"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/atom.xml"><i class="fa-fw fa fa-rss"></i><span> RSS订阅</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('http://forgo7ten.gitee.io/store/imgs/12.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Forgo7ten'blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-compass"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/atom.xml"><i class="fa-fw fa fa-rss"></i><span> RSS订阅</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fas fa-comment-dots"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Base16,Base32,Base64编码详细学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-01-15T11:13:05.000Z" title="发表于 2020-01-15 19:13:05">2020-01-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-01-15T11:15:00.000Z" title="更新于 2020-01-15 19:15:00">2020-01-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Reverse/">Reverse</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Base16,Base32,Base64编码详细学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Base编码">Base编码<a class="header-anchor" href="#Base编码"> ¶ </a></h1>
+<h2 id="Base16编码">Base16编码<a class="header-anchor" href="#Base16编码"> ¶ </a></h2>
+<h3 id="Base16编码表格">Base16编码表格<a class="header-anchor" href="#Base16编码表格"> ¶ </a></h3>
+<p>Base16字符表：<code>0123456789ABCDEF</code></p>
+<table>
+<thead>
+<tr>
+<th>下标</th>
+<th>编码值</th>
+<th>下标</th>
+<th>编码值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>9</td>
+<td>9</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>10</td>
+<td>A</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>11</td>
+<td>B</td>
+</tr>
+<tr>
+<td>4</td>
+<td>4</td>
+<td>12</td>
+<td>C</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5</td>
+<td>13</td>
+<td>D</td>
+</tr>
+<tr>
+<td>6</td>
+<td>6</td>
+<td>14</td>
+<td>E</td>
+</tr>
+<tr>
+<td>7</td>
+<td>7</td>
+<td>15</td>
+<td>F</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Base16编码方式">Base16编码方式<a class="header-anchor" href="#Base16编码方式"> ¶ </a></h3>
+<ol>
+<li>将数据(根据ASCII编码,UTF-8编码等)转成对应的二进制数</li>
+<li>然后将所有的二进制全部串起来，4个二进制位为一组，转化成对应十进制数。</li>
+<li>根据十进制数值找到Base16编码表里面对应的字符</li>
+</ol>
+<p>base16是4个比特位表示一个字符，原码是1个字节（8个比特位）表示一个字符，也就是说原先如果使用ASCII编码后的一个字符，现在转化成两个字符。数据量是原先的2倍。<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191218201844154.png" alt="在这里插入图片描述"><br>
+也就是<code>LOVE</code>加密后是<code>4C4F5645</code></p>
+<h3 id="Base16伪代码-实际环境">Base16伪代码|实际环境<a class="header-anchor" href="#Base16伪代码-实际环境"> ¶ </a></h3>
+<p>@TODO</p>
+<h2 id="Base32编码">Base32编码<a class="header-anchor" href="#Base32编码"> ¶ </a></h2>
+<h3 id="Base32编码表格">Base32编码表格<a class="header-anchor" href="#Base32编码表格"> ¶ </a></h3>
+<p>Base32字符表：<code>ABCDEFGHIJKLMNOPQRSTUVWXYZ234567</code><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/201912182031120.png" alt="在这里插入图片描述"></p>
+<h3 id="Base32编码方式">Base32编码方式<a class="header-anchor" href="#Base32编码方式"> ¶ </a></h3>
+<ol>
+<li>将数据(根据ASCII编码,UTF-8编码等)转成对应的二进制数</li>
+<li>然后将所有的二进制全部串起来，5个二进制位为一组，若不足5位则低位补0，转化成对应十进制数。</li>
+<li>若不足40位，则补<code>=</code><br>
+一个<code>=</code>相当于5位，补满40位为止。</li>
+</ol>
+<p>例：<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191218210335864.png" alt="在这里插入图片描述"><br>
+最后01不足5位，低位补全0。补为<code>01000</code>，也就是8<br>
+然后这才35位，需要末尾补一个<code>=</code><br>
+所以<code>LOVE</code>用Base32编码后得到<code>JRHVMRI=</code></p>
+<p>base32 结尾可能会有 <code>=</code> 号，但最多有 6 个</p>
+<h3 id="Base32伪代码-实际环境">Base32伪代码|实际环境<a class="header-anchor" href="#Base32伪代码-实际环境"> ¶ </a></h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">v3 = <span class="number">0</span>;</span><br><span class="line">  v4 = <span class="number">0</span>;</span><br><span class="line">  v28 = <span class="number">0</span>;</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  v25 = <span class="number">0</span>;</span><br><span class="line">  v6 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( v30 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( !*(_BYTE *)(v6 + v2) )               <span class="comment">// v2为字符串首地址，v6为0开始遍历</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      ++v6;</span><br><span class="line">      v5 += <span class="number">8</span>;</span><br><span class="line">      ++v3;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( v6 &lt; v30 );                         <span class="comment">// 循环完，v5为将所有字符转换为二进制位、的位数</span></span><br><span class="line">                                                <span class="comment">// </span></span><br><span class="line">    v28 = v3;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">switch</span> ( v5 % <span class="number">40</span> )                            <span class="comment">// 这里对位数是否能整除40做判断，来判断是否添加&#x27;=&#x27;</span></span><br><span class="line">                                                <span class="comment">// v4等于多少就添加几个&#x27;=&#x27;</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">8u</span>:</span><br><span class="line">      v4 = <span class="number">6</span>;</span><br><span class="line">      <span class="keyword">goto</span> LABEL_10;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">16u</span>:</span><br><span class="line">      v4 = <span class="number">4</span>;</span><br><span class="line">      <span class="keyword">goto</span> LABEL_10;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">24u</span>:</span><br><span class="line">      v4 = <span class="number">3</span>;</span><br><span class="line">      <span class="keyword">goto</span> LABEL_10;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">32u</span>:</span><br><span class="line">      v4 = <span class="number">1</span>;</span><br><span class="line">LABEL_10:</span><br><span class="line">      v25 = v4;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  v29 = (<span class="number">8</span> * v3 + <span class="number">4</span>) / <span class="number">5</span>;                       <span class="comment">// 除以5，算一下转换后数据个数</span></span><br><span class="line">                                                <span class="comment">// +4的原因是，向上取整，让余数也算一个数据</span></span><br></pre></td></tr></table></figure>
+<h2 id="Base64编码">Base64编码<a class="header-anchor" href="#Base64编码"> ¶ </a></h2>
+<h3 id="Base64编码表格">Base64编码表格<a class="header-anchor" href="#Base64编码表格"> ¶ </a></h3>
+<p>使用了ASCII编码中64个可打印的字符(大写字母A ~ Z,小写字母a ~ z,数字0~9以及&quot;+“,”/&quot;)<br>
+Base64字符表：<code>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/</code><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191218210834868.png" alt="在这里插入图片描述"></p>
+<h3 id="Base64编码方式">Base64编码方式<a class="header-anchor" href="#Base64编码方式"> ¶ </a></h3>
+<ol>
+<li>
+<p>将数据(根据ASCII编码,UTF-8编码等)转成对应的二进制数</p>
+</li>
+<li>
+<p>然后将所有的二进制全部串起来，6个二进制位为一组，若不足6位则低位补0，转化成对应十进制数。</p>
+</li>
+<li>
+<p>若不足24位，则补<code>=</code><br>
+一个<code>=</code>相当于6个二进制位。<br>
+例：<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191218212504346.png" alt="在这里插入图片描述"><br>
+最后只有4位，低位补全0，则为<code>111100</code><br>
+然后3*6=18 不足24位，加上一个<code>=</code><br>
+<code>LO</code>加密后是<code>TE8=</code></p>
+</li>
+</ol>
+<p>base64 结尾可能会有 <code>=</code> 号，但最多有 2 个</p>
+<h3 id="Base64伪代码-实际环境">Base64伪代码|实际环境<a class="header-anchor" href="#Base64伪代码-实际环境"> ¶ </a></h3>
+<p>当函数头是这种时候，大概率是Base64加密，然后根据字符集来确认<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/2019121821311285.png" alt="在这里插入图片描述"><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191225172334626.png" alt="在这里插入图片描述"><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20200111213239645.png" alt="在这里插入图片描述"></p>
+<h3 id="Base64url-编码">Base64url 编码<a class="header-anchor" href="#Base64url-编码"> ¶ </a></h3>
+<p>字符表中的  <code>+</code>→  <code>-</code>，  <code>/</code>→  <code>_</code></p>
+<h2 id="总结-2">总结<a class="header-anchor" href="#总结-2"> ¶ </a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">下标数字的位个数</th>
+<th style="text-align:center">编码表字符串</th>
+<th style="text-align:center">位数不足是否会补全=</th>
+<th style="text-align:center">编码后数据量变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">base16</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">数字0~ 9和字母A~F</td>
+<td style="text-align:center">不会，位数刚好是4的倍数</td>
+<td style="text-align:center">由一个8位表示一个字符 变成  4位表示一个字符，数据量变为原来的2倍</td>
+</tr>
+<tr>
+<td style="text-align:center">base32</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">大写字母A~ Z 和 数字2~7</td>
+<td style="text-align:center">会</td>
+<td style="text-align:center">变为 8/5 倍</td>
+</tr>
+<tr>
+<td style="text-align:center">base64</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">大写字母A~ Z，小写字母a~ z，数字0~9以及&quot;+“，”/&quot;</td>
+<td style="text-align:center">会</td>
+<td style="text-align:center">变为 8/6=4/3 倍</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Base加解密-Python实现">Base加解密|Python实现<a class="header-anchor" href="#Base加解密-Python实现"> ¶ </a></h1>
+<h2 id="Base16加解密实现">Base16加解密实现<a class="header-anchor" href="#Base16加解密实现"> ¶ </a></h2>
+<h3 id="Base16加解密（原始字符表）">Base16加解密（原始字符表）<a class="header-anchor" href="#Base16加解密（原始字符表）"> ¶ </a></h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">original = <span class="string">&#x27;wo tai nan le&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;1  original:  &quot;</span>,<span class="built_in">type</span>(original),original)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;2  original.encode(&#x27;utf-8&#x27;):  &quot;</span>,<span class="built_in">type</span>(original.encode(<span class="string">&#x27;utf-8&#x27;</span>)),original.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">str_encode = base64.b16encode(original.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;3  str_encode:  &quot;</span>,<span class="built_in">type</span>(str_encode),str_encode)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;4  str(str_encode,&#x27;utf-8&#x27;):  &quot;</span>,<span class="built_in">type</span>(<span class="built_in">str</span>(str_encode,<span class="string">&#x27;utf-8&#x27;</span>)),<span class="built_in">str</span>(str_encode,<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">str_decode = base64.b16decode(str_encode)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;5  str_decode:  &quot;</span>,<span class="built_in">type</span>(str_decode),str_decode)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>(str_decode,<span class="string">&#x27;utf-8&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>输出结果为<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191219170829198.png" alt="在这里插入图片描述"><br>
+关键代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">base64.b16encode(&lt;<span class="string">&#x27;bytes&#x27;</span>&gt;)  <span class="comment">#base16编码</span></span><br><span class="line">base64.b16decode(&lt;<span class="string">&#x27;bytes&#x27;</span>&gt;)  <span class="comment">#base16解码</span></span><br></pre></td></tr></table></figure>
+<p>可以知道，在python3.7中<br>
+base64.b<em>16</em>encode(X)  其中需要加密的类型为’<em>bytes</em>’<br>
+（其中<em>16</em>可自行替换为16 32 64）<br>
+同时，加密后的类型也为’<em>bytes</em>’类型</p>
+<p>所以加密的时候需要<strong>将 <em>str</em> 类型先转换为 <em>bytes</em> 类型：</strong><br>
+例如：origin是一个 <em>str</em> 类型，则<code>origin.encode('utf-8')</code>则为 <em>bytes</em> 类型</p>
+<p>而<strong>将 <em>bytes</em> 类型先转换为 <em>str</em> 类型：</strong><br>
+代码：<code>str(origin,'utf-8')</code>其中origin是需要转换的 <em>bytes</em> 类型数据</p>
+<h3 id="Base16加解密（自定义字符表）">Base16加解密（自定义字符表）<a class="header-anchor" href="#Base16加解密（自定义字符表）"> ¶ </a></h3>
+<p>Base16的原始字符表为：<code>0123456789ABCDEF</code><br>
+倘若我们替换成<code>abcdef0123456789</code><br>
+用到两个方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span>.maketrans(intab, outtab)  //用于创建字符映射的转换表</span><br><span class="line">intab -- 字符串中被替代的字符组成的字符串。</span><br><span class="line">outtab -- 用来替换的字符串。</span><br><span class="line">后者替换前者</span><br><span class="line"><span class="comment">#第三个参数此处不讨论</span></span><br><span class="line">此处的<span class="built_in">str</span>不可改</span><br><span class="line"></span><br><span class="line"><span class="built_in">str</span>.translate(table[, deletechars])  //根据参数table给出的表转换字符串的字符</span><br><span class="line">table -- 翻译表，翻译表是通过maketrans方法转换而来。</span><br><span class="line">deletechars -- 字符串中要过滤的字符列表。<span class="comment">#第二个参数此处不讨论</span></span><br><span class="line">此处的<span class="built_in">str</span>为需要转换的字符串，自行根据自己字符串取的名称进行更换</span><br></pre></td></tr></table></figure>
+<p>实例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">intab = <span class="string">&quot;like&quot;</span></span><br><span class="line">outtab = <span class="string">&quot;love&quot;</span></span><br><span class="line">biao = <span class="built_in">str</span>.maketrans(intab, outtab)</span><br><span class="line">origin = <span class="string">&quot;I like you&quot;</span></span><br><span class="line"><span class="built_in">print</span>(origin.translate(biao))</span><br></pre></td></tr></table></figure>
+<p>输出<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/20191219173824799.png" alt="在这里插入图片描述"><br>
+<strong>加解密实例</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">origin = <span class="string">&#x27;wo tai nan le!!&#x27;</span></span><br><span class="line">biao1 = <span class="built_in">str</span>.maketrans(<span class="string">&quot;0123456789ABCDEF&quot;</span>,<span class="string">&quot;abcdef0123456789&quot;</span>)</span><br><span class="line">str_encode = base64.b16encode(origin.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">encode = <span class="built_in">str</span>(str_encode,<span class="string">&#x27;utf-8&#x27;</span>).translate(biao1)</span><br><span class="line"><span class="built_in">print</span>(encode)</span><br><span class="line">biao2 = <span class="built_in">str</span>.maketrans(<span class="string">&quot;abcdef0123456789&quot;</span>,<span class="string">&quot;0123456789ABCDEF&quot;</span>)</span><br><span class="line">str_decode = base64.b16decode(encode.translate(biao2).encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">str</span>(str_decode,<span class="string">&#x27;utf-8&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1109ca1e0b03ca080b08ca060fcbcb</span><br><span class="line">wo tai nan le!!</span><br></pre></td></tr></table></figure>
+<h2 id="Base32加解密实现">Base32加解密实现<a class="header-anchor" href="#Base32加解密实现"> ¶ </a></h2>
+<p>同Base16加解密，将b16改为b32即可</p>
+<h2 id="Base64加解密实现">Base64加解密实现<a class="header-anchor" href="#Base64加解密实现"> ¶ </a></h2>
+<p>同Base16加解密，将b16改为b64即可</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Forgo7ten</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://forgo7ten.github.io/Reverse/2020/Base64_coding_learning/">https://forgo7ten.github.io/Reverse/2020/Base64_coding_learning/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Forgo7ten.github.io" target="_blank">Forgo7ten'blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Reverse/">Reverse</a></div><div class="post_share"><div class="social-share" data-image="http://forgo7ten.gitee.io/store/imgs/12.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.png" target="_blank"><img class="post-qr-code-img" src="/images/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/Reverse/2020/Preliminary_analysis_of_virus_samples/"><img class="next-cover" src="http://forgo7ten.gitee.io/store/imgs/3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">样本分析初战</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/Reverse/2021/010Editor_registration_process_analysis/" title="010Editor注册license算法分析"><img class="cover" src="http://forgo7ten.gitee.io/store/imgs/4.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-21</div><div class="title">010Editor注册license算法分析</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Base%E7%BC%96%E7%A0%81"><span class="toc-number">1.</span> <span class="toc-text">Base编码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Base16%E7%BC%96%E7%A0%81"><span class="toc-number">1.1.</span> <span class="toc-text">Base16编码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Base16%E7%BC%96%E7%A0%81%E8%A1%A8%E6%A0%BC"><span class="toc-number">1.1.1.</span> <span class="toc-text">Base16编码表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base16%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.2.</span> <span class="toc-text">Base16编码方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base16%E4%BC%AA%E4%BB%A3%E7%A0%81-%E5%AE%9E%E9%99%85%E7%8E%AF%E5%A2%83"><span class="toc-number">1.1.3.</span> <span class="toc-text">Base16伪代码|实际环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base32%E7%BC%96%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text">Base32编码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Base32%E7%BC%96%E7%A0%81%E8%A1%A8%E6%A0%BC"><span class="toc-number">1.2.1.</span> <span class="toc-text">Base32编码表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base32%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.2.</span> <span class="toc-text">Base32编码方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base32%E4%BC%AA%E4%BB%A3%E7%A0%81-%E5%AE%9E%E9%99%85%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.3.</span> <span class="toc-text">Base32伪代码|实际环境</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base64%E7%BC%96%E7%A0%81"><span class="toc-number">1.3.</span> <span class="toc-text">Base64编码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Base64%E7%BC%96%E7%A0%81%E8%A1%A8%E6%A0%BC"><span class="toc-number">1.3.1.</span> <span class="toc-text">Base64编码表格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base64%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text">Base64编码方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base64%E4%BC%AA%E4%BB%A3%E7%A0%81-%E5%AE%9E%E9%99%85%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.3.</span> <span class="toc-text">Base64伪代码|实际环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base64url-%E7%BC%96%E7%A0%81"><span class="toc-number">1.3.4.</span> <span class="toc-text">Base64url 编码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-2"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Base%E5%8A%A0%E8%A7%A3%E5%AF%86-Python%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">Base加解密|Python实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Base16%E5%8A%A0%E8%A7%A3%E5%AF%86%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.1.</span> <span class="toc-text">Base16加解密实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Base16%E5%8A%A0%E8%A7%A3%E5%AF%86%EF%BC%88%E5%8E%9F%E5%A7%8B%E5%AD%97%E7%AC%A6%E8%A1%A8%EF%BC%89"><span class="toc-number">2.1.1.</span> <span class="toc-text">Base16加解密（原始字符表）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Base16%E5%8A%A0%E8%A7%A3%E5%AF%86%EF%BC%88%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AD%97%E7%AC%A6%E8%A1%A8%EF%BC%89"><span class="toc-number">2.1.2.</span> <span class="toc-text">Base16加解密（自定义字符表）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base32%E5%8A%A0%E8%A7%A3%E5%AF%86%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.2.</span> <span class="toc-text">Base32加解密实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Base64%E5%8A%A0%E8%A7%A3%E5%AF%86%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.3.</span> <span class="toc-text">Base64加解密实现</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('http://forgo7ten.gitee.io/store/imgs/12.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Forgo7ten</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://Forgo7ten.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '9e01c692fcf5a9e47867',
+      clientSecret: '6d5297eda0643a171a9e5510f5ea1c29ad851389',
+      repo: 'Forgo7ten.github.io',
+      owner: 'Forgo7ten',
+      admin: ['Forgo7ten'],
+      id: '0633414d87bd9e0c7fcca2c797edcab5',
+      updateCountCallback: commentCount
+    },{"language":"en","perPage":20,"distractionFreeMode":true,"pagerDirection":"last","createIssueManually":true}))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="ヾ(≧▽≦*)o 点个收藏叭,(*^▽^*),w(ﾟДﾟ)w,ㄟ(≧◇≦)ㄏ,(/≧▽≦)/点个关注叭,Σ(っ °Д °;)っ,(●ˇ∀ˇ●),( •̀ ω •́ )✧,(*/ω＼*),ヽ(*。&gt;Д&lt;)o゜真的不收藏一下嘛,(～o￣3￣)～,ヽ（≧□≦）ノ" data-fontsize="15px" data-random="false" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":0,"vOffset":-20},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script></body></html>
